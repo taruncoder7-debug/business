@@ -119,7 +119,7 @@ export default function EmployeeManagement({ user, onNavigate }) {
     }
   }
 
-  if (!user || user.role !== 'admin') {
+  if (!user || String(user?.role || '').toLowerCase() !== 'admin') {
     return <div className="alert alert-danger">Access Denied: Only Admins can manage employees</div>
   }
 
@@ -347,4 +347,5 @@ export default function EmployeeManagement({ user, onNavigate }) {
     </div>
   )
 }
+
 

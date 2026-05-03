@@ -20,7 +20,7 @@ export default function Users({ user, onNavigate }) {
       .finally(() => setLoading(false))
   }, [])
 
-  if (!user || user.role !== 'admin') {
+  if (!user || String(user?.role || '').toLowerCase() !== 'admin') {
     return <div className="alert alert-danger">Access Denied: Only Admins can manage users</div>
   }
 
@@ -69,3 +69,4 @@ export default function Users({ user, onNavigate }) {
     </div>
   )
 }
+

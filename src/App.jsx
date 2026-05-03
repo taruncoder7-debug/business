@@ -75,6 +75,7 @@ export default function App() {
   const handleNavigate = (page) => {
     setCurrentPage(page)
   }
+  const isAdmin = String(user?.role || '').toLowerCase() === 'admin'
 
   const renderPage = () => {
     switch (currentPage) {
@@ -117,9 +118,9 @@ export default function App() {
       case 'chat':
         return <ConferenceRoom user={user} onNavigate={handleNavigate} />
       case 'users':
-        return user?.role === 'admin' ? <Users user={user} onNavigate={handleNavigate} /> : <Dashboard user={user} onNavigate={handleNavigate} />
+        return isAdmin ? <Users user={user} onNavigate={handleNavigate} /> : <Dashboard user={user} onNavigate={handleNavigate} />
       case 'employees':
-        return <EmployeeManagement user={user} onNavigate={handleNavigate} />
+        return isAdmin ? <EmployeeManagement user={user} onNavigate={handleNavigate} /> : <Dashboard user={user} onNavigate={handleNavigate} />
       case 'analytics':
         return <Analytics user={user} onNavigate={handleNavigate} />
       default:

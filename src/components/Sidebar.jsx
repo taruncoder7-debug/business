@@ -4,11 +4,12 @@ import sidebarThumbnail from '../assets/sidebar-thumbnail.svg'
 export default function Sidebar({ user, currentPage, onNavigate }) {
   const [expandedMenu, setExpandedMenu] = useState(null)
   const isActiveSubmenu = (item) => item.submenu?.some((subitem) => subitem.id === currentPage)
+  const isAdmin = String(user?.role || '').toLowerCase() === 'admin'
 
   const menuItems = [
     { id: 'home', label: 'Home', icon: 'HM' },
     { id: 'dashboard', label: 'Dashboard', icon: 'DB' },
-    ...(user?.role === 'admin'
+    ...(isAdmin
       ? [
           {
             id: 'admin',
