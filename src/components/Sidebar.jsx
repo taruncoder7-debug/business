@@ -1,18 +1,19 @@
 import React, { useState } from 'react'
+import sidebarThumbnail from '../assets/sidebar-thumbnail.svg'
 
 export default function Sidebar({ user, currentPage, onNavigate }) {
   const [expandedMenu, setExpandedMenu] = useState(null)
   const isActiveSubmenu = (item) => item.submenu?.some((subitem) => subitem.id === currentPage)
 
   const menuItems = [
-    { id: 'home', label: 'Home', icon: '??' },
-    { id: 'dashboard', label: 'Dashboard', icon: '??' },
+    { id: 'home', label: 'Home', icon: 'HM' },
+    { id: 'dashboard', label: 'Dashboard', icon: 'DB' },
     ...(user?.role === 'admin'
       ? [
           {
             id: 'admin',
             label: 'Admin Panel',
-            icon: '??',
+            icon: 'AD',
             submenu: [
               { id: 'employees', label: 'Employee Management' },
               { id: 'users', label: 'User Management' }
@@ -23,7 +24,7 @@ export default function Sidebar({ user, currentPage, onNavigate }) {
     {
       id: 'reports',
       label: 'Reports & Export',
-      icon: '??',
+      icon: 'RP',
       submenu: [
         { id: 'analytics', label: 'Analytics & Export' },
         { id: 'reports', label: 'View Reports' }
@@ -32,7 +33,7 @@ export default function Sidebar({ user, currentPage, onNavigate }) {
     {
       id: 'sales',
       label: 'Sales',
-      icon: '??',
+      icon: 'SL',
       submenu: [
         { id: 'orders', label: 'Orders' },
         { id: 'invoices', label: 'Invoices' },
@@ -43,7 +44,7 @@ export default function Sidebar({ user, currentPage, onNavigate }) {
     {
       id: 'inventory',
       label: 'Inventory',
-      icon: '??',
+      icon: 'IV',
       submenu: [
         { id: 'products', label: 'Products' },
         { id: 'stock-status', label: 'Stock Status' },
@@ -53,7 +54,7 @@ export default function Sidebar({ user, currentPage, onNavigate }) {
     {
       id: 'operations',
       label: 'Operations',
-      icon: '??',
+      icon: 'OP',
       submenu: [
         { id: 'tasks', label: 'Tasks' },
         { id: 'attendance', label: 'Attendance' },
@@ -63,13 +64,13 @@ export default function Sidebar({ user, currentPage, onNavigate }) {
     {
       id: 'vendors',
       label: 'Vendors & Purchases',
-      icon: '??',
+      icon: 'VN',
       submenu: [{ id: 'purchases', label: 'Purchase Orders' }]
     },
     {
       id: 'insights',
       label: 'Insights',
-      icon: '??',
+      icon: 'IN',
       submenu: [
         { id: 'sales-overview', label: 'Sales Overview' },
         { id: 'top-products', label: 'Top Products' },
@@ -89,7 +90,13 @@ export default function Sidebar({ user, currentPage, onNavigate }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <div className="brand-icon">??</div>
+        <div className="brand-icon">
+          <img
+            src={sidebarThumbnail}
+            alt="Company introduction thumbnail"
+            className="brand-thumbnail"
+          />
+        </div>
         <div>
           <div className="brand-name">Quantico</div>
           <div className="brand-id">ID: CMP-1006</div>
@@ -104,7 +111,7 @@ export default function Sidebar({ user, currentPage, onNavigate }) {
             >
               <span className="menu-icon">{item.icon}</span>
               <span className="menu-label">{item.label}</span>
-              {item.submenu && <span className="menu-toggle">{expandedMenu === item.id || isActiveSubmenu(item) ? '?' : '?'}</span>}
+              {item.submenu && <span className="menu-toggle">{expandedMenu === item.id || isActiveSubmenu(item) ? 'v' : '>'}</span>}
             </button>
             {item.submenu && (expandedMenu === item.id || isActiveSubmenu(item)) && (
               <div className="sidebar-submenu">
