@@ -1,14 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react'
-import api from './api'
+import React, { useState } from 'react'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
-import LoginModal from './components/LoginModal'
 import Dashboard from './pages/Dashboard'
 import Tasks from './pages/Tasks'
 import Inventory from './pages/Inventory'
 import Attendance from './pages/Attendance'
 import Invoices from './pages/Invoices'
-import Chat from './pages/Chat'
 import Users from './pages/Users'
 import Home from './pages/Home'
 import Products from './pages/Products'
@@ -26,80 +23,21 @@ import Analytics from './pages/Analytics'
 import Purchases from './pages/Purchases'
 import ConferenceRoom from './pages/ConferenceRoom'
 
+const DEFAULT_USER = {
+  _id: '000000000000000000000001',
+  name: 'Alice Johnson',
+  email: 'admin@example.com',
+  role: 'admin'
+}
+
 export default function App() {
-  const [user, setUser] = useState(null)
-  const [token, setToken] = useState(localStorage.getItem('token'))
-  const [authChecked, setAuthChecked] = useState(!localStorage.getItem('token'))
   const [currentPage, setCurrentPage] = useState('dashboard')
-
-  // Ensure axios instance has token on initial load (when page refresh)
-  useEffect(() => {
-    let cancelled = false
-
-    async function verifySavedSession() {
-      if (!token) {
-        setAuthChecked(true)
-        return
-      }
-
-      api.setToken(token)
-      try {
-        const saved = localStorage.getItem('user')
-        if (saved) setUser(JSON.parse(saved))
-        await api.me()
-        if (!cancelled) setAuthChecked(true)
-      } catch (e) {
-        if (!cancelled) {
-          console.warn('Saved session is invalid; signing out', e)
-          setToken(null)
-          setUser(null)
-          setAuthChecked(true)
-          localStorage.removeItem('token')
-          localStorage.removeItem('user')
-          api.setToken(null)
-        }
-      }
-    }
-
-    verifySavedSession()
-    return () => {
-      cancelled = true
-    }
-  }, [token])
-
-  const onLogin = useCallback((loginData) => {
-    console.log('→ onLogin called with token:', !!loginData?.token)
-    if (!loginData?.token || !loginData?.user) {
-      console.error('Invalid login data received', loginData)
-      return
-    }
-    
-    localStorage.setItem('token', loginData.token)
-    localStorage.setItem('user', JSON.stringify(loginData.user))
-    
-    api.setToken(loginData.token)
-    
-    setToken(loginData.token)
-    setUser(loginData.user)
-    
-    console.log('→ Login success! User:', loginData.user.name)
-  }, [])
-
-  const logout = useCallback(() => {
-    console.log('→ Logout')
-    setToken(null)
-    setUser(null)
-    setAuthChecked(true)
-    setCurrentPage('dashboard')
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    api.setToken(null)
-  }, [])
+  const user = DEFAULT_USER
+  const isAdmin = String(user.role || '').toLowerCase() === 'admin'
 
   const handleNavigate = (page) => {
     setCurrentPage(page)
   }
-  const isAdmin = String(user?.role || '').toLowerCase() === 'admin'
 
   const renderPage = () => {
     switch (currentPage) {
@@ -128,7 +66,7 @@ export default function App() {
       case 'reports':
         return <Reports user={user} onNavigate={handleNavigate} />
       case 'taxes':
-        return <Payments user={user} onNavigate={handleNavigate} />  // Use Payments for Taxes (financial section)
+        return <Payments user={user} onNavigate={handleNavigate} />
       case 'tasks':
         return <Tasks user={user} onNavigate={handleNavigate} />
       case 'inventory':
@@ -152,29 +90,15 @@ export default function App() {
     }
   }
 
-  console.log('→ App render: authenticated=', !!token, ', user=', user?.name || 'none')
-
   return (
     <div style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
-      <Navbar user={user} onLogout={logout} />
-      
-      {!authChecked ? (
-        <div style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <div className="dashboard-loading"><p>Checking session...</p></div>
-        </div>
-      ) : !token ? (
-        <div style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <LoginModal onLogin={onLogin} />
-        </div>
-      ) : (
-        <div style={{display: 'flex', flex: 1, overflow: 'hidden'}}>
-          <Sidebar user={user} currentPage={currentPage} onNavigate={handleNavigate} />
-          <main className="main-content" style={{flex: 1, overflowY: 'auto', padding: '30px'}}>
-            {renderPage()}
-          </main>
-        </div>
-      )}
+      <Navbar user={user} />
+      <div style={{display: 'flex', flex: 1, overflow: 'hidden'}}>
+        <Sidebar user={user} currentPage={currentPage} onNavigate={handleNavigate} />
+        <main className="main-content" style={{flex: 1, overflowY: 'auto', padding: '30px'}}>
+          {renderPage()}
+        </main>
+      </div>
     </div>
   )
 }
-

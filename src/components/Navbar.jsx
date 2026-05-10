@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 
-export default function Navbar({ user, onLogout }) {
+export default function Navbar({ user }) {
   const [searchOpen, setSearchOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -62,8 +62,6 @@ export default function Navbar({ user, onLogout }) {
               <div className="user-role">{user.role}</div>
             </div>
           </div>
-
-          <button className="btn btn-ghost" onClick={onLogout}>Logout</button>
         </div>
       )}
     </nav>

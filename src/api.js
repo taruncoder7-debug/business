@@ -17,16 +17,6 @@ function setToken(token) {
   else delete instance.defaults.headers.common['Authorization']
 }
 
-// If running in browser and a token exists in localStorage, set it immediately
-try {
-  if (typeof window !== 'undefined' && window.localStorage) {
-    const t = window.localStorage.getItem('token')
-    if (t) setToken(t)
-  }
-} catch (e) {
-  // ignore (e.g., during server-side tools)
-}
-
 async function login(email, password) {
   return instance.post('/auth/login', { email, password })
 }
