@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 // Use Vite environment variables for backend URL
-let API_BASE = 'http://localhost:4000'
+let API_BASE = 'https://busiback.onrender.com'
 try {
   if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE) {
     API_BASE = import.meta.env.VITE_API_BASE
