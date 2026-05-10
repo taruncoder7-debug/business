@@ -29,18 +29,41 @@ import ConferenceRoom from './pages/ConferenceRoom'
 export default function App() {
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(localStorage.getItem('token'))
+  const [authChecked, setAuthChecked] = useState(!localStorage.getItem('token'))
   const [currentPage, setCurrentPage] = useState('dashboard')
 
   // Ensure axios instance has token on initial load (when page refresh)
   useEffect(() => {
-    if (token) {
+    let cancelled = false
+
+    async function verifySavedSession() {
+      if (!token) {
+        setAuthChecked(true)
+        return
+      }
+
       api.setToken(token)
       try {
         const saved = localStorage.getItem('user')
         if (saved) setUser(JSON.parse(saved))
+        await api.me()
+        if (!cancelled) setAuthChecked(true)
       } catch (e) {
-        console.warn('Failed to parse saved user', e)
+        if (!cancelled) {
+          console.warn('Saved session is invalid; signing out', e)
+          setToken(null)
+          setUser(null)
+          setAuthChecked(true)
+          localStorage.removeItem('token')
+          localStorage.removeItem('user')
+          api.setToken(null)
+        }
       }
+    }
+
+    verifySavedSession()
+    return () => {
+      cancelled = true
     }
   }, [token])
 
@@ -66,6 +89,7 @@ export default function App() {
     console.log('→ Logout')
     setToken(null)
     setUser(null)
+    setAuthChecked(true)
     setCurrentPage('dashboard')
     localStorage.removeItem('token')
     localStorage.removeItem('user')
@@ -134,7 +158,11 @@ export default function App() {
     <div style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
       <Navbar user={user} onLogout={logout} />
       
-      {!token ? (
+      {!authChecked ? (
+        <div style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <div className="dashboard-loading"><p>Checking session...</p></div>
+        </div>
+      ) : !token ? (
         <div style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <LoginModal onLogin={onLogin} />
         </div>

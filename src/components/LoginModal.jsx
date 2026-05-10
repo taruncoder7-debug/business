@@ -20,7 +20,7 @@ export default function LoginModal({ onLogin }) {
       // Call parent callback with response data
       onLogin(res.data)
     } catch (err) {
-      const errMsg = err?.response?.data?.message || err?.message || 'Login failed'
+      const errMsg = err?.response?.data?.message || err?.response?.data?.error || err?.message || 'Login failed'
       console.error('→ LoginModal: Login error:', errMsg)
       setError(errMsg)
     } finally {

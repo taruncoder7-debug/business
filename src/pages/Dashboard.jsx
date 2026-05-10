@@ -15,8 +15,9 @@ export default function Dashboard({ onNavigate }) {
         setError(null)
       })
       .catch(err => {
-        console.error('Dashboard fetch error:', err.message)
-        setError(err.message)
+        const errMsg = err?.response?.data?.message || err?.response?.data?.error || err.message
+        console.error('Dashboard fetch error:', errMsg)
+        setError(errMsg)
         setData({ widgets: [] })
       })
       .finally(() => setLoading(false))
